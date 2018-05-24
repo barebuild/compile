@@ -1,0 +1,3 @@
+#!/bin/bash
+# Used as legacy helper
+exec barebuild-compile "$@"

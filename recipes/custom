@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+recipe=$(mktemp)
+cat > $recipe
+chmod a+x $recipe
+exec $recipe "$@"

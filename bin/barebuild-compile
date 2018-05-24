@@ -1,0 +1,2 @@
+#!/bin/bash
+exec barebuild compile "$1" --target="$(cat /etc/version)" --prefix="$PREFIX" --version="$2" --cache="$CACHE" --quiet=$QUIET

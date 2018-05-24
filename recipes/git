@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+status() {
+	echo "$@"
+}
+
+indent() {
+	cat
+}
+
+OUT_PREFIX=$1
+
+git_version=$VERSION
+git_url="https://github.com/git/git/archive/v$git_version.tar.gz"
+status "Downloading Git $git_version..."
+curl $git_url -sL -o - | tar xzf - --strip-components=1
+make NO_TCLTK=YesPlease NO_PERL=YesPlease NO_GETTEXT=YesPlease NO_SVN_TESTS=YesPlease NO_MSGFMT=YesPlease NO_MSGFMT_EXTENDED_OPTIONS=YesPlease CFLAGS="-Os -g0 -Wall" prefix="$OUT_PREFIX" install clean

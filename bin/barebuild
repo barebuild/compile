@@ -1,0 +1,5 @@
+#!/bin/bash
+exec ssh -q \
+	-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+	"$WANIP" -p "$WANPORT" \
+	"$@"
