@@ -7,6 +7,12 @@ function err() {
 	exit $2
 }
 
+function check_parameter_validity() {
+	if [[ "$1" =~ [^\-:_/\.a-zA-Z0-9] ]]; then
+		err "Invalid $2"
+	fi
+}
+
 RECIPE="$1"
 shift
 
@@ -70,6 +76,10 @@ fi
 if [ -z "$TARGET" ]; then
 	err "No target given" 2
 fi
+
+check_parameter_validity "$PREFIX" "PREFIX"
+check_parameter_validity "$VERSION" "VERSION"
+check_parameter_validity "$TARGET" "TARGET"
 
 recipefile="$SOURCE/recipes/$RECIPE"
 if ! test -f "$recipefile" ; then
