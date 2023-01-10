@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.6
+FROM alpine:3
 
 RUN apk add --update docker bash && rm -rf /var/cache/apk/*
 

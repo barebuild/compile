@@ -10,7 +10,14 @@ export LANG="en_US.UTF-8"
 export GEM_HOME="$OUT_PREFIX"
 
 mkdir -p $RUBY_PREFIX
-PREFIX=$RUBY_PREFIX buildcurl ruby 2.4.1 | tar xz -C $RUBY_PREFIX
+
+if [ "$TARGET" = "ubuntu:22.04" ]; then
+	RUBY_VERSION="3.1.2"
+else
+	RUBY_VERSION="2.4.4"
+fi
+
+PREFIX=$RUBY_PREFIX buildcurl ruby "$RUBY_VERSION" | tar xz -C $RUBY_PREFIX
 
 echo "-> Building rubygem-$GEM $VERSION..."
 if [ "${#VERSION}" = "40" ] || [ "${#VERSION}" = "7" ]; then
@@ -18,10 +25,10 @@ if [ "${#VERSION}" = "40" ] || [ "${#VERSION}" = "7" ]; then
 	pushd pkgr
 	git reset --hard "$VERSION"
 	$RUBY_PREFIX/bin/gem build $GEM.gemspec
-	$RUBY_PREFIX/bin/gem install *.gem --no-ri --no-rdoc --env-shebang
+	$RUBY_PREFIX/bin/gem install *.gem --no-document --env-shebang
 	popd
 else
-	$RUBY_PREFIX/bin/gem install $GEM --version $VERSION --no-ri --no-rdoc --env-shebang
+	$RUBY_PREFIX/bin/gem install $GEM --version $VERSION --no-document --env-shebang
 fi
 rm -rf $GEM_HOME/cache/*.gem
 echo "-----> Done."

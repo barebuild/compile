@@ -12,8 +12,7 @@ echo "-> Building libyaml ${VERSION}..."
 tmpdir=$(mktemp -d)
 
 pushd $tmpdir
-curl -s "http://download.openpkg.org/components/cache/yaml/yaml-${VERSION}.tar.gz" -o - | tar xzf - --strip-components=1
-# curl -s "http://pyyaml.org/download/libyaml/yaml-${VERSION}.tar.gz" -o - | tar xzf - --strip-components=1
+curl -L -s "https://github.com/yaml/libyaml/releases/download/${VERSION}/yaml-${VERSION}.tar.gz" -o - | tar xzf - --strip-components=1
 
 env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=${OUT_PREFIX}
 make

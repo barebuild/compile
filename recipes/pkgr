@@ -5,8 +5,14 @@ OUT_PREFIX=$1
 set -e
 set -o pipefail
 
+if [ "$TARGET" = "ubuntu:22.04" ]; then
+	RUBY_VERSION="3.1.2"
+else
+	RUBY_VERSION="2.4.4"
+fi
+
 echo "-----> Building pkgr ${VERSION}..."
-PREFIX=/app/vendor/ruby buildcurl ruby 2.4.1 | tar xz -C $OUT_PREFIX
+PREFIX=/app/vendor/ruby buildcurl ruby "$RUBY_VERSION" | tar xz -C $OUT_PREFIX
 
 GEM_HOME="$($OUT_PREFIX/bin/gem env GEM_HOME)"
 pushd "$GEM_HOME"

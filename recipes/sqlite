@@ -8,10 +8,15 @@ set -eux
 
 echo "Building SQLite..."
 
+curl_flags="-L"
+# issue with let's encrypt, need to update base image
+if [ "$TARGET" = "sles:12" ]; then
+  curl_flags="$curl_flags -k"
+fi
 
 SOURCE_TARBALL='https://www.sqlite.org/sqlite-autoconf-3070900.tar.gz'
 
-curl $SOURCE_TARBALL | tar xz --strip-components=1
+curl $curl_flags $SOURCE_TARBALL | tar xz --strip-components=1
 ./configure --prefix=$OUT_PREFIX
 make -j ${JOBS:=1}
 make install

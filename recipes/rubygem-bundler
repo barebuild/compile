@@ -1,14 +1,16 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 OUT_PREFIX="$1"
 RUBY_PREFIX="/app/vendor/ruby"
 GEM="bundler"
 DEFAULT_VERSION="1.11.2"
 VERSION=${VERSION:-$DEFAULT_VERSION}
-RUBY_VERSION="2.3.7"
-if [ "$TARGET" = "ubuntu:18.04" ]; then
+
+if [ "$TARGET" = "ubuntu:22.04" ]; then
+	RUBY_VERSION="3.1.2"
+else
 	RUBY_VERSION="2.4.4"
 fi
 
@@ -19,6 +21,6 @@ mkdir -p $RUBY_PREFIX
 PREFIX=$RUBY_PREFIX buildcurl ruby $RUBY_VERSION | tar xz -C $RUBY_PREFIX
 
 echo "-----> Building rubygem-$GEM $VERSION..."
-$RUBY_PREFIX/bin/gem install $GEM --version $VERSION --no-ri --no-rdoc --env-shebang
+$RUBY_PREFIX/bin/gem install $GEM --version $VERSION --document --env-shebang
 rm -rf $GEM_HOME/cache/$GEM-$VERSION.gem
 echo "-----> Done."

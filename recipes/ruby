@@ -22,17 +22,29 @@ dep_dirname=ruby-${dep_version}
 dep_archive_name=${dep_dirname}.tar.gz
 dep_url=http://cache.ruby-lang.org/pub/ruby/${major_ruby}/${dep_archive_name}
 
-echo "-> Building ruby ${dep_version}..."
+echo "-> Fetching ruby ${dep_version}..."
+curl -L "${dep_url}" -o - | tar xzf -
 
-curl -L ${dep_url} | tar xz
-buildcurl libyaml 0.1.7 | tar xz -C $OUT_PREFIX
+echo "-> Building libyaml dependency..."
+buildcurl libyaml 0.2.5 | tar xz -C $OUT_PREFIX
+
+echo "-> Building libffi dependency..."
 buildcurl libffi 3.2.1 | tar xz -C $OUT_PREFIX
 
+echo "-> Compiling ruby ${dep_version}..."
 pushd ${dep_dirname}
+
+# required for RHEL7 and SLES12
+# https://ml.ruby-lang.org/mailman3/hyperkitty/list/ruby-core@ml.ruby-lang.org/thread/Q4Y44DVL3FIBNZ3WFIACLED46C75LXPU/
+if [ "$TARGET" = "el:7" ] || [ "$TARGET" = "sles:12" ]; then
+	export cflags="-std=gnu99"
+fi
+
 debugflags="-g" ./configure \
     --prefix=${OUT_PREFIX} \
     --disable-install-doc \
     --enable-load-relative
+
 CPATH=$OUT_PREFIX/include:$CPATH \
 	CPPATH=$OUT_PREFIX/include:$CPPATH \
 	LIBRARY_PATH=$OUT_PREFIX/lib:$LIBRARY_PATH \
