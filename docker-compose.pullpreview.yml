@@ -1,0 +1,36 @@
+services:
+  # easily set up SSL termination
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    command: "caddy reverse-proxy --from '${PULLPREVIEW_URL}' --to web:4567"
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/data"
+
+  # simple ruby web server for demo purposes, which connects to a postgres DB
+  web:
+    restart: unless-stopped
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM ruby:3.2
+        RUN gem install sinatra pg puma
+        CMD ruby -rsinatra -rpg -rpuma \
+          -e'get("/"){ "Hey PullPreview user, here is the postgres version: #{PG.connect(ENV["PGURI"]).exec("SELECT VERSION()").getvalue(0,0)}" }'
+        EXPOSE 4567
+    environment:
+      PGURI: "postgres://postgres:p4ssw0rd@db/postgres"
+      APP_ENV: production
+
+  db:
+    restart: unless-stopped
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: p4ssw0rd
